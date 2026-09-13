@@ -68,8 +68,8 @@ def coldict2mat(coldict):
     >>> B = [Vec({0,1},{0:1,1:2}),Vec({0,1},{0:3,1:4})]
     >>> mat2coldict(coldict2mat(A)) == A
     True
-    >>> coldict2mat(A)
-    Mat(({0, 1}, {0, 1}), {(0, 1): 3, (1, 0): 2, (0, 0): 1, (1, 1): 4})
+    >>> coldict2mat(A) == Mat(({0, 1}, {0, 1}), {(0, 1): 3, (1, 0): 2, (0, 0): 1, (1, 1): 4})
+    True
     >>> coldict2mat(A) == coldict2mat(B)
     True
     """
@@ -90,8 +90,8 @@ def rowdict2mat(rowdict):
     >>> B = [Vec({0,1},{0:1,1:2}),Vec({0,1},{0:3,1:4})]
     >>> mat2rowdict(rowdict2mat(A)) == A
     True
-    >>> rowdict2mat(A)
-    Mat(({0, 1}, {0, 1}), {(0, 1): 2, (1, 0): 3, (0, 0): 1, (1, 1): 4})
+    >>> rowdict2mat(A) == Mat(({0, 1}, {0, 1}), {(0, 1): 2, (1, 0): 3, (0, 0): 1, (1, 1): 4})
+    True
     >>> rowdict2mat(A) == rowdict2mat(B)
     True
     """
