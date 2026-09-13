@@ -12,7 +12,7 @@
     """
 
 import mat
-import linalg.png as png
+import png
 import numbers
 import collections
 import webbrowser
