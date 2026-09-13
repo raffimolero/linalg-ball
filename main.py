@@ -1,10 +1,11 @@
 from image_mat_util import file2mat, mat2display
 from transform import *
 
-TEST_FILE = "img01.png"
+TEST_FILE = "graphic-design.png"
 TEST_MAT, TEST_COLS = file2mat(TEST_FILE)
-TEST_W, TEST_H = 166, 189
+TEST_W, TEST_H = 263, 149
 BASE_TRANSLATION = translation(500, 500)
+
 
 def task_4_15_1():
     """
@@ -74,26 +75,56 @@ def task_4_15_8():
     mat2display(BASE_TRANSLATION * M * TEST_MAT, TEST_COLS)
 
 
+def task_4_15_9():
+    """
+    Write a procedure scale_color() that takes r, g, and b scaling parameters and returns the corresponding scaling matrix.
+    """
+    M = scale_color(1, 0.5, 2)
+    mat2display(BASE_TRANSLATION * TEST_MAT, M * TEST_COLS)
+
+
+def task_4_15_10():
+    """
+    Write a procedure grayscale() that returns a matrix that converts a color image to a grayscale image.
+    Note that both images are still represented in RGB.
+    If a pixel in the original image had the values r,g,b in each of the color channels, then in the grayscale image it has the value 77r/256 + 151g/256 + 28b/256 in all three color channels.
+    """
+    M = grayscale()
+    mat2display(BASE_TRANSLATION * TEST_MAT, M * TEST_COLS)
+
+
+def task_4_15_11():
+    """
+    Write a procedure reflect_about(x1,y1,x2,y2) that takes two points and returns the matrix that reflects about the line defined by the two points.
+    (Hint: Use rotations, translations, and a simple reflection).
+    """
+    M = reflect_about(1, 1, 5, 7)
+    mat2display(BASE_TRANSLATION * M * TEST_MAT, TEST_COLS)
+
+
 def main():
     tasks = {
-        1: task_4_15_1,
-        2: task_4_15_2,
-        3: task_4_15_3,
-        4: task_4_15_4,
-        5: task_4_15_5,
-        6: task_4_15_6,
-        7: task_4_15_7,
-        8: task_4_15_8,
+        "show": task_4_15_1,
+        "identity": task_4_15_2,
+        "translate": task_4_15_3,
+        "scale": task_4_15_4,
+        "rotate": task_4_15_5,
+        "rotate about": task_4_15_6,
+        "reflect y": task_4_15_7,
+        "reflect x": task_4_15_8,
+        "scale color": task_4_15_9,
+        "grayscale": task_4_15_10,
+        "reflect about": task_4_15_11,
     }
-    while (line := input(f'Enter task [1-{len(tasks)}] or q to exit: ').strip()) != 'q':
+    prompt = f'Enter task (or exit):\n{'\n'.join(f'> {task}' for task in tasks.keys())}\n> '
+    while (line := input(prompt).strip()) != "exit":
         try:
-            i = int(line)
-            t = tasks[i]
+            t = tasks[line]
             t()
-        except:
-            print(f'Must be a number from 1 to {len(tasks)}.')
-
-
+        except IndexError:
+            pass
+        except Exception as e:
+            print(e)
 
 if __name__ == "__main__":
     main()

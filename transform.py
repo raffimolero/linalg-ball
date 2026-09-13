@@ -1,11 +1,15 @@
-from math import cos, sin, tau
+from math import atan2, cos, sin, tau
 
 from mat import Mat
 from vec import Vec
 
 VEC_LOCATION_KEYS = {"x", "y", "u"}
 MAT_LOCATION_KEYS = (VEC_LOCATION_KEYS,) * 2
-MAT_IDENTITY_3 = Mat(MAT_LOCATION_KEYS, {(k, k): 1 for k in VEC_LOCATION_KEYS})
+MAT_LOCATION_IDENTITY_3 = Mat(MAT_LOCATION_KEYS, {(k, k): 1 for k in VEC_LOCATION_KEYS})
+
+VEC_COLOR_KEYS = {"r", "g", "b"}
+MAT_COLOR_KEYS = (VEC_COLOR_KEYS,) * 2
+MAT_COLOR_IDENTITY_3 = Mat(MAT_COLOR_KEYS, {(k, k): 1 for k in VEC_COLOR_KEYS})
 
 
 def vec_approx_equal(u, v, e=2**-8):
@@ -41,7 +45,7 @@ def identity():
     >>> v*M == v
     True
     """
-    return clone_mat(MAT_IDENTITY_3)
+    return clone_mat(MAT_LOCATION_IDENTITY_3)
 
 
 def translation(alpha, beta):
@@ -64,7 +68,14 @@ def scale(alpha, beta):
     >>> M*v == Vec({'x','y','u'}, {'x':10,'y':21,'u':1})
     True
     """
-    return Mat(MAT_LOCATION_KEYS, {("x", "x"): alpha, ("y", "y"): beta, ("u", "u"): 1})
+    return Mat(
+        MAT_LOCATION_KEYS,
+        {
+            ("x", "x"): alpha,
+            ("y", "y"): beta,
+            ("u", "u"): 1,
+        },
+    )
 
 
 def rotation(theta):
@@ -102,3 +113,44 @@ def reflect_y():
 
 def reflect_x():
     return scale(-1, 1)
+
+
+def scale_color(r, g, b):
+    return Mat(
+        MAT_COLOR_KEYS,
+        {
+            ("r", "r"): r,
+            ("g", "g"): g,
+            ("b", "b"): b,
+        },
+    )
+
+
+def grayscale():
+    return Mat(
+        MAT_COLOR_KEYS,
+        {
+            ("r", "r"): 77 / 256,
+            ("r", "g"): 151 / 256,
+            ("r", "b"): 28 / 256,
+            ("g", "r"): 77 / 256,
+            ("g", "g"): 151 / 256,
+            ("g", "b"): 28 / 256,
+            ("b", "r"): 77 / 256,
+            ("b", "g"): 151 / 256,
+            ("b", "b"): 28 / 256,
+        },
+    )
+
+
+def reflect_about(x1, y1, x2, y2):
+    dx = x2 - x1
+    dy = y2 - y1
+    dt = atan2(dy, dx)
+    return (
+        translation(dx, dy)
+        * rotation(dt)
+        * reflect_y()
+        * rotation(-dt)
+        * translation(-dx, -dy)
+    )
