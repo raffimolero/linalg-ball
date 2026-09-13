@@ -12,7 +12,7 @@ def getitem(v,k):
     0
     """
     assert k in v.D
-    return v.f[k] if k in v.f else 0
+    return v.f.get(k, 0)
 
 def setitem(v,k,val):
     """
@@ -34,8 +34,8 @@ def setitem(v,k,val):
     assert k in v.D
     if val == 0:
         v.f.pop(k, None)
-    else:
-        v.f[k] = val
+        return
+    v.f[k] = val
 
 def equal(u,v):
     """
@@ -114,9 +114,7 @@ def add(u,v):
     uk = u.f.keys()
     vk = v.f.keys()
     uvk = uk | vk
-    # the commented version removes the entries that sum to 0, which is disallowed by the test
-    # return Vec(u.D, {k: x for k in uvk if (x := u[k] + v[k])})
-    return Vec(u.D, {k: u[k] + v[k] for k in uvk})
+    return Vec(u.D, {k: x for k in uvk if (x := u[k] + v[k])})
 
 def dot(u,v):
     """
@@ -150,8 +148,7 @@ def dot(u,v):
     12
     """
     assert u.D == v.D
-    # note the distinction between u.f[k] and v[k]: one calls getitem
-    return sum(u.f[k] * v[k] for k in u.f.keys())
+    return sum(uk * v[k] for k, uk in u.f.items())
 
 def scalar_mul(v, alpha):
     """
@@ -173,7 +170,7 @@ def scalar_mul(v, alpha):
     """
     if alpha == 0:
         return Vec(v.D, {})
-    return Vec(v.D, {k: v * alpha for k,v in v.f.items()})
+    return Vec(v.D, {k: v * alpha for k, v in v.f.items()})
 
 def neg(v):
     """
