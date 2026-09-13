@@ -13,7 +13,7 @@ def getitem(M, k):
     0
     """
     assert k[0] in M.D[0] and k[1] in M.D[1]
-    pass
+    return M.f.get(k, 0)
 
 def equal(A, B):
     """
@@ -39,7 +39,10 @@ def equal(A, B):
     True
     """
     assert A.D == B.D
-    pass
+    uk = A.f.keys()
+    vk = B.f.keys()
+    uvk = uk | vk
+    return all(A[k] == B[k] for k in uvk)
 
 def setitem(M, k, val):
     """
@@ -59,6 +62,10 @@ def setitem(M, k, val):
     True
     """
     assert k[0] in M.D[0] and k[1] in M.D[1]
+    if val == 0:
+        M.f.pop(k, None)
+        return
+    M.f[k] = val
     pass
 
 def add(A, B):
@@ -87,7 +94,10 @@ def add(A, B):
     True
     """
     assert A.D == B.D
-    pass
+    Ak = A.f.keys()
+    Bk = B.f.keys()
+    ABk = Ak | Bk
+    return Mat(A.D, {k: x for k in ABk if (x := A[k] + B[k])})
 
 def scalar_mul(M, x):
     """
@@ -101,7 +111,10 @@ def scalar_mul(M, x):
     >>> 0.25*M == Mat(({1,3,5}, {2,4}), {(1,2):1.0, (5,4):0.5, (3,4):0.75})
     True
     """
-    pass
+    if x == 0:
+        return Mat(M.D, {})
+    out = Mat(M.D, {k: v * x for k, v in M.f.items()})
+    return out
 
 def transpose(M):
     """
@@ -115,7 +128,7 @@ def transpose(M):
     >>> M.transpose() == Mt
     True
     """
-    pass
+    return Mat((M.D[1], M.D[0]), {(k[1], k[0]): v for k, v in M.f.items()})
 
 def vector_matrix_mul(v, M):
     """
@@ -142,7 +155,17 @@ def vector_matrix_mul(v, M):
     True
     """
     assert M.D[0] == v.D
-    pass
+    return Vec(
+        M.D[1],
+        {
+            col: x
+            for col in M.D[1]
+            if (x := sum(
+                vr * M[row, col]
+                for row, vr in v.f.items()
+            ))
+        }
+    )
 
 def matrix_vector_mul(M, v):
     """
@@ -169,7 +192,16 @@ def matrix_vector_mul(M, v):
     True
     """
     assert M.D[1] == v.D
-    pass
+    return Vec(
+        M.D[0],
+        {
+            row: sum(
+                vc * M[row, col]
+                for col, vc in v.f.items()
+            )
+            for row in M.D[0]
+        }
+    )
 
 def matrix_matrix_mul(A, B):
     """
@@ -198,7 +230,20 @@ def matrix_matrix_mul(A, B):
     True
     """
     assert A.D[1] == B.D[0]
-    pass
+    rows = {k[0] for k in A.f.keys()}
+    cols = {k[1] for k in B.f.keys()}
+    line = {k[0] for k in B.f.keys()} | {k[1] for k in A.f.keys()}
+    return Mat(
+        (A.D[0], B.D[1]),
+        {
+            (row, col): sum(
+                A[row, k] * B[k, col]
+                for k in line
+            )
+            for row in rows
+            for col in cols
+        }
+    )
 
 ################################################################################
 
