@@ -33,5 +33,5 @@ uv run pytest
 To run all doctests recursively:
 
 ```powershell
-uv run pytest --doctest-modules .
+uv run pytest --doctest-modules . -vv
 ```
